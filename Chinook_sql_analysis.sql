@@ -7,7 +7,8 @@ They want the following lists promoted:
 */
 
 -- Finding top 100 songs by units sold
-SELECT track.name AS "Track", artist.name AS "Artist"
+SELECT track.name AS "Track", 
+  artist.name AS "Artist"
 FROM track
 JOIN album ON track.album_id = album.album_id
 JOIN artist ON album.artist_id = artist.artist_id
@@ -27,7 +28,8 @@ ORDER BY SUM(invoice_line.quantity) DESC
 LIMIT 10;
 
 -- Finding top 10 tracks in UK by units sold
-SELECT track.name AS "Track", artist.name AS "Artist"
+SELECT track.name AS "Track", 
+  artist.name AS "Artist"
 FROM track
 JOIN album ON track.album_id = album.album_id
 JOIN artist ON album.artist_id = artist.artist_id
@@ -39,3 +41,15 @@ ORDER BY SUM(invoice_line.quantity) DESC
 LIMIT 10;
 
 -- Finding top 10 songs in last 6 months by units sold
+SELECT track.name AS "Track", 
+  artist.name AS "Artist"
+FROM track
+JOIN album ON track.album_id = album.album_id
+JOIN artist ON album.artist_id = artist.artist_id
+JOIN invoice_line ON track.track_id = invoice_line.track_id
+JOIN invoice ON invoice_line.invoice_id = invoice.invoice_id
+WHERE invoice.invoice_date >= CURRENT_DATE - INTERVAL '6 months'
+  AND invoice.invoice_date <= CURRENT_DATE --Needed because Chinook generates random  sales data, and includes future timestamps
+GROUP BY track.track_id, track.name, artist.name
+ORDER BY SUM(invoice_line.quantity) DESC
+LIMIT 10;
